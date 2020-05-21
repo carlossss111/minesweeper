@@ -56,12 +56,12 @@ a img{
     grid-gap:0;
     grid-template-rows: repeat(var(--grid-rows), 1fr);
     grid-template-columns: repeat(var(--grid-cols), 1fr);
-    width:calc(32px * var(--grid-cols));
+    width:calc(36px * var(--grid-cols));
 }
 
 .cell{
     background-color:#801336;
     border:1px #2d132c solid;
-    width:30px;
-    height:30px;
+    width:34px;
+    height:34px;
 }
