@@ -1,0 +1,45 @@
+*{
+    margin:0;
+    border:0;
+}
+
+body{
+    min-height:88.15vh; 
+    background-color: #2d132c;
+    color:#ee4540;
+    text-align:center;
+    font-family:'Oxygen',sans-serif;
+}
+
+header{
+    background-color: #801336;
+}
+
+main{
+    max-width: 840px;
+    min-width: 60%;
+    margin:0 auto;
+}
+
+footer{
+    background-color: #801336;
+    position:absolute;
+    bottom:0;
+    width:100%;
+}
+
+h1{
+    font-size:2.5rem;
+    padding:0.4em 0;
+    font-family:'Roboto Condensed','Oxygen',sans-serif;
+}
+
+a{
+    color:#ee4540;
+    text-decoration:none;
+}
+
+a img{
+    height:1em;
+    padding-right:0.2em;
+}
