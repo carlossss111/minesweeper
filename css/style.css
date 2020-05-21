@@ -3,8 +3,8 @@
     border:0;
 }
 
+/*Document*/
 body{
-    min-height:88.15vh; 
     background-color: #2d132c;
     color:#ee4540;
     text-align:center;
@@ -42,4 +42,26 @@ a{
 a img{
     height:1em;
     padding-right:0.2em;
+}
+
+/*Minesweeper Grid*/
+:root {
+    --grid-cols: 1;/*Default variable values*/
+    --grid-rows: 1;
+}
+
+#gridContainer{
+    margin:50px auto 50px auto;
+    display:grid;
+    grid-gap:0;
+    grid-template-rows: repeat(var(--grid-rows), 1fr);
+    grid-template-columns: repeat(var(--grid-cols), 1fr);
+    width:calc(32px * var(--grid-cols));
+}
+
+.cell{
+    background-color:#801336;
+    border:1px #2d132c solid;
+    width:30px;
+    height:30px;
 }
