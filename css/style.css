@@ -21,6 +21,10 @@ main{
     margin:0 auto;
 }
 
+main p{
+    padding:0.5em 0;
+}
+
 footer{
     background-color: #801336;
     position:absolute;
@@ -51,7 +55,7 @@ a img{
 }
 
 #gridContainer{
-    margin:50px auto 50px auto;
+    margin:25px auto 50px auto;
     display:grid;
     grid-gap:0;
     grid-template-rows: repeat(var(--grid-rows), 1fr);
