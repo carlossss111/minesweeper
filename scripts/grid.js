@@ -68,11 +68,23 @@ var grid = {
             gameController.failed = true;
         }
 
+        //Gets the cell position on the board.
         let pos = this.findCellPosition(cell);
         let x = pos[0];
         let y = pos[1];
+
+        //Checks for adjacent mines.
+        let adjacentMines = 0;
+        if(this.gridArray[x+1][y].isMine){ adjacentMines++ };//right
+        if(this.gridArray[x-1][y].isMine){ adjacentMines++ };//left
+        if(this.gridArray[x][y+1].isMine){ adjacentMines++ };//above
+        if(this.gridArray[x][y-1].isMine){ adjacentMines++ };//below
+        if(this.gridArray[x+1][y+1].isMine){ adjacentMines++ };//above right
+        if(this.gridArray[x-1][y+1].isMine){ adjacentMines++ };//above left
+        if(this.gridArray[x+1][y-1].isMine){ adjacentMines++ };//below right
+        if(this.gridArray[x-1][y-1].isMine){ adjacentMines++ };//below left
         console.log(pos);
-        console.log(this.gridArray[x][y])
+        console.log(adjacentMines);
 
         cell.style.backgroundColor = "#c72c41";
         cell.style.color = "#2d132c";
