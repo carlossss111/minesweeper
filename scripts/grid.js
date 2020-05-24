@@ -27,6 +27,8 @@ var grid = {
                 rowdiv.appendChild(cell);
                 cell.className = "cell";
                 cell.isMine = false;//default attribute.
+                cell.flag = false;
+                cell.visited = false;
                 this._gridArray[i].push(cell);//pushes to the 2d array.
             }
         };
@@ -42,7 +44,7 @@ var grid = {
                 }
                 else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
                     this._gridArray[i][j].isMine = true;//creates isMine attribute.
-                    this._gridArray[i][j].innerText = "M";//debug
+                    //this._gridArray[i][j].innerText = "M";//debug
                     mines--;
                 }
             }
@@ -83,6 +85,7 @@ var grid = {
         //FF uncover if there are none.
         if (this.adjacentMines(x,y)){
             cell.innerText = this.adjacentMines(x,y);
+            cell.visited = true;
         }
         else{
             this.FFuncover(x,y)
@@ -129,6 +132,9 @@ var grid = {
         if (this.adjacentMines(x,y)){
             cell.innerText = this.adjacentMines(x,y);
         }
+        else{
+            cell.innerText = "";
+        }
         cell.style.backgroundColor = "#c72c41";
         cell.style.color = "#2d132c";
         cell.visited = true;
@@ -144,6 +150,17 @@ var grid = {
             try{this.FFuncover(x, y-1);}catch(ignore){};
             try{this.FFuncover(x, y+1);}catch(ignore){};
         }
+    },
+
+    flag: function(cell) {
+        if (cell.visited === false && cell.flag === false){
+            cell.innerText = "F";
+            cell.flag = true;
+        }
+        else if (cell.visited === false){
+            cell.innerText = "";
+            cell.flag = false;
+        }
     }
 }
 
@@ -156,8 +173,11 @@ var gameController = {
             for (j = 0; j < grid._cols; j++){
                 grid.gridArray[i][j].addEventListener('mouseup', function(event){
                     //Handler calls the checkCell method (if the game is not over).
-                    if(gameController.failed === false){
+                    if ((event.button === 0) && (gameController.failed === false)){
                         grid.checkCell(event.target);//Calls checkCell method.
+                    }
+                    else if ((event.button === 2) && (gameController.failed === false)){
+                        grid.flag(event.target);
                     }
                 })
             }
@@ -167,6 +187,7 @@ var gameController = {
     //Refreshes the page
     reset: function(){
         document.addEventListener('keydown', function(event){
+            if(event.key === "R" || event.key === "r")
             this.location.reload();
         })
     },
