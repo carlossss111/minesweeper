@@ -56,13 +56,41 @@ var grid = {
     initialiseAll: function(rows, cols, mines){
         this.initialiseGrid(rows,cols);
         this.initialiseMines(mines);
+        document.getElementById("failMsg").style.visibility = "hidden";
         console.log("Grid initialised!")
     },
 
     //Checks the cell for a mine.
     checkCell: function(cell){
+        if(cell.isMine){
+            console.log("Mine hit, game over!");
+            document.getElementById("failMsg").style.visibility = "visible";
+            gameController.failed = true;
+        }
+
+        let pos = this.findCellPosition(cell);
+        let x = pos[0];
+        let y = pos[1];
+        console.log(pos);
+        console.log(this.gridArray[x][y])
+
         cell.style.backgroundColor = "#c72c41";
         cell.style.color = "#2d132c";
+    },
+
+    //Finds the cell position (x,y) in the array if not known. For when a cell is clicked.
+    findCellPosition : function(cell){
+        let index;
+        for(x = 0; x < this._rows; x++){
+            let y = this.gridArray[x].findIndex(function(elem){
+                return elem === cell;
+            })
+            if (y !== -1){
+                index = [x,y];
+                break;
+            }
+        }
+        return index;
     }
 }
 
