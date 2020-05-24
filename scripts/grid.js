@@ -74,18 +74,24 @@ var grid = {
         let y = pos[1];
 
         //Checks for adjacent mines.
+        //Note the y axis is inverted so its going down as it increases. (0,0) is at the top left.
+        //Try catch ignores values that are undefined because they are not on the grid. Looks awful but I can't figure out how else to do it.
         let adjacentMines = 0;
-        if(this.gridArray[x+1][y].isMine){ adjacentMines++ };//right
-        if(this.gridArray[x-1][y].isMine){ adjacentMines++ };//left
-        if(this.gridArray[x][y+1].isMine){ adjacentMines++ };//above
-        if(this.gridArray[x][y-1].isMine){ adjacentMines++ };//below
-        if(this.gridArray[x+1][y+1].isMine){ adjacentMines++ };//above right
-        if(this.gridArray[x-1][y+1].isMine){ adjacentMines++ };//above left
-        if(this.gridArray[x+1][y-1].isMine){ adjacentMines++ };//below right
-        if(this.gridArray[x-1][y-1].isMine){ adjacentMines++ };//below left
+        try{    if(this.gridArray[x+1][y].isMine){ adjacentMines++ };   }catch(ignore){};//right
+        try{    if(this.gridArray[x-1][y].isMine){ adjacentMines++ };   }catch(ignore){};//left
+        try{    if(this.gridArray[x][y+1].isMine){ adjacentMines++ };   }catch(ignore){};//below
+        try{    if(this.gridArray[x][y-1].isMine){ adjacentMines++ };   }catch(ignore){};//above
+        try{    if(this.gridArray[x+1][y+1].isMine){ adjacentMines++ }; }catch(ignore){};//below right
+        try{    if(this.gridArray[x-1][y+1].isMine){ adjacentMines++ }; }catch(ignore){};//below left
+        try{    if(this.gridArray[x+1][y-1].isMine){ adjacentMines++ }; }catch(ignore){};//above right
+        try{    if(this.gridArray[x-1][y-1].isMine){ adjacentMines++ }; }catch(ignore){};//above left
         console.log(pos);
         console.log(adjacentMines);
 
+        //Writes the number if there are any adjacent mines.
+        if (adjacentMines){
+            cell.innerText = adjacentMines;
+        }
         cell.style.backgroundColor = "#c72c41";
         cell.style.color = "#2d132c";
     },
