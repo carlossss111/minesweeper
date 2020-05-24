@@ -42,7 +42,7 @@ var grid = {
                 }
                 else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
                     this._gridArray[i][j].isMine = true;//creates isMine attribute.
-                    this._gridArray[i][j].innerText = "M";//debug
+                    //this._gridArray[i][j].innerText = "M";//debug
                     mines--;
                 }
             }
@@ -62,10 +62,16 @@ var grid = {
 
     //Checks the cell for a mine.
     checkCell: function(cell){
+
+        cell.style.backgroundColor = "#c72c41";
+        cell.style.color = "#2d132c";
+
         if(cell.isMine){
             console.log("Mine hit, game over!");
+            cell.innerText = "M";
             document.getElementById("failMsg").style.visibility = "visible";
             gameController.failed = true;
+            return;
         }
 
         //Gets the cell position on the board.
@@ -85,15 +91,12 @@ var grid = {
         try{    if(this.gridArray[x-1][y+1].isMine){ adjacentMines++ }; }catch(ignore){};//below left
         try{    if(this.gridArray[x+1][y-1].isMine){ adjacentMines++ }; }catch(ignore){};//above right
         try{    if(this.gridArray[x-1][y-1].isMine){ adjacentMines++ }; }catch(ignore){};//above left
-        console.log(pos);
-        console.log(adjacentMines);
+        console.log(`Adjacent mines ${adjacentMines}`);
 
         //Writes the number if there are any adjacent mines.
         if (adjacentMines){
             cell.innerText = adjacentMines;
         }
-        cell.style.backgroundColor = "#c72c41";
-        cell.style.color = "#2d132c";
     },
 
     //Finds the cell position (x,y) in the array if not known. For when a cell is clicked.
