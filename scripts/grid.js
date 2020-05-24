@@ -42,7 +42,7 @@ var grid = {
                 }
                 else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
                     this._gridArray[i][j].isMine = true;//creates isMine attribute.
-                    //this._gridArray[i][j].innerText = "M";//debug
+                    this._gridArray[i][j].innerText = "M";//debug
                     mines--;
                 }
             }
@@ -79,24 +79,28 @@ var grid = {
         let x = pos[0];
         let y = pos[1];
 
-        //Checks for adjacent mines.
-        //Note the y axis is inverted so its going down as it increases. (0,0) is at the top left.
-        //Try catch ignores values that are undefined because they are not on the grid. Looks awful but I can't figure out how else to do it.
-        let adjacentMines = 0;
-        try{    if(this.gridArray[x+1][y].isMine){ adjacentMines++ };   }catch(ignore){};//right
-        try{    if(this.gridArray[x-1][y].isMine){ adjacentMines++ };   }catch(ignore){};//left
-        try{    if(this.gridArray[x][y+1].isMine){ adjacentMines++ };   }catch(ignore){};//below
-        try{    if(this.gridArray[x][y-1].isMine){ adjacentMines++ };   }catch(ignore){};//above
-        try{    if(this.gridArray[x+1][y+1].isMine){ adjacentMines++ }; }catch(ignore){};//below right
-        try{    if(this.gridArray[x-1][y+1].isMine){ adjacentMines++ }; }catch(ignore){};//below left
-        try{    if(this.gridArray[x+1][y-1].isMine){ adjacentMines++ }; }catch(ignore){};//above right
-        try{    if(this.gridArray[x-1][y-1].isMine){ adjacentMines++ }; }catch(ignore){};//above left
-        console.log(`Adjacent mines ${adjacentMines}`);
-
         //Writes the number if there are any adjacent mines.
-        if (adjacentMines){
-            cell.innerText = adjacentMines;
+        //FF uncover if there are none.
+        if (this.adjacentMines(x,y)){
+            cell.innerText = this.adjacentMines(x,y);
         }
+        else{
+            this.FFuncover(x,y)
+        }
+    },
+
+    //Returns the number of adjacent mines.
+    adjacentMines: function(x,y){
+        let count = 0;
+        try{    if(this.gridArray[x+1][y].isMine){ count++ };   }catch(ignore){};//right
+        try{    if(this.gridArray[x-1][y].isMine){ count++ };   }catch(ignore){};//left
+        try{    if(this.gridArray[x][y+1].isMine){ count++ };   }catch(ignore){};//below
+        try{    if(this.gridArray[x][y-1].isMine){ count++ };   }catch(ignore){};//above
+        try{    if(this.gridArray[x+1][y+1].isMine){ count++ }; }catch(ignore){};//below right
+        try{    if(this.gridArray[x-1][y+1].isMine){ count++ }; }catch(ignore){};//below left
+        try{    if(this.gridArray[x+1][y-1].isMine){ count++ }; }catch(ignore){};//above right
+        try{    if(this.gridArray[x-1][y-1].isMine){ count++ }; }catch(ignore){};//above left
+        return count;
     },
 
     //Finds the cell position (x,y) in the array if not known. For when a cell is clicked.
@@ -112,6 +116,34 @@ var grid = {
             }
         }
         return index;
+    },
+
+    //Uses flood fill to uncover cells surrounding a zero.
+    FFuncover: function(x,y){
+        let cell = this._gridArray[x][y];
+        if(cell.visited === true || cell.isMine === true){
+            return;
+        }
+
+        //Styles
+        if (this.adjacentMines(x,y)){
+            cell.innerText = this.adjacentMines(x,y);
+        }
+        cell.style.backgroundColor = "#c72c41";
+        cell.style.color = "#2d132c";
+        cell.visited = true;
+
+        //If this cell itself is a zero, repeat for nearby cells.
+        if(this.adjacentMines(x,y) === 0){
+            try{this.FFuncover(x-1, y);}catch(ignore){};//try/catch for edges cba
+            try{this.FFuncover(x-1, y+1);}catch(ignore){};
+            try{this.FFuncover(x-1, y-1);}catch(ignore){};
+            try{this.FFuncover(x+1, y);}catch(ignore){};
+            try{this.FFuncover(x+1, y+1);}catch(ignore){};
+            try{this.FFuncover(x+1, y-1);}catch(ignore){};
+            try{this.FFuncover(x, y-1);}catch(ignore){};
+            try{this.FFuncover(x, y+1);}catch(ignore){};
+        }
     }
 }
 
@@ -146,5 +178,5 @@ var gameController = {
     }
 }
 
-grid.initialiseAll();
+grid.initialiseAll(12,12,40);
 gameController.addAllListeners();
