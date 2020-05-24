@@ -12,33 +12,51 @@ var grid = {
 
     //Method initialises the grid with rows and cols as paramenters (or defaults).
     initialiseGrid: function(rows = this._rows, cols = this._cols) {
+        console.log("Initialising grid...")
         this._rows = rows;//Sets object properties.
         this._cols = cols;
-        //const container = document.getElementById("gridContainer");
         this._container.style.setProperty('--grid-rows', rows);//CSS properties
         this._container.style.setProperty('--grid-cols', cols);
         //Loops through and creates the required number of cells.
         //The _gridArray property is turned into a 2d array (x,-y).
         for (i = 0; i < rows; i++) {
-            let rowcell = document.createElement("div");
-            this._container.appendChild(rowcell);
-
-            //this._twoDimensional[0].push(rowcell);
+            let rowdiv = document.createElement("div");
+            this._container.appendChild(rowdiv);
             this._gridArray.push( [] )
-            //this._container.appendChild(cell).id = i;
             for (j = 0; j < cols; j++) {
-                let colcell = document.createElement("div");
-                rowcell.appendChild(colcell);
-                colcell.className = "cell";
-
-                this._gridArray[i].push(colcell);
+                let cell = document.createElement("div");
+                rowdiv.appendChild(cell);
+                cell.className = "cell";
+                cell.isMine = false;//default attribute.
+                this._gridArray[i].push(cell);//pushes to the 2d array.
             }
         };
         console.log(this.gridArray);
     },
+
+    //Method places the required (or default) amount of mines around randomly.
+    initialiseMines: function(mines = this._mines){
+        console.log("Planting mines...")
+        for (i = 0; i < this._rows; i++){
+            for (j = 0; j < this._cols; j++){
+                if (mines === 0){
+                    break;
+                }
+                else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
+                    this._gridArray[i][j].isMine = true;//creates isMine attribute.
+                    this._gridArray[i][j].innerText = "M";//debug
+                    mines--;
+                }
+            }
+        }
+        if(mines !== 0){
+            this.initialiseMines(mines);
+        }
+    },
 }
 
 grid.initialiseGrid();
+grid.initialiseMines();
 
 //var myArray = new Array();
 //myArray.push([4,4]);
