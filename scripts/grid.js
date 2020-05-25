@@ -44,7 +44,7 @@ var grid = {
                 }
                 else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
                     this._gridArray[i][j].isMine = true;//creates isMine attribute.
-                    //this._gridArray[i][j].innerText = "M";//debug
+                    this._gridArray[i][j].innerText = "M";//debug
                     mines--;
                 }
             }
@@ -152,6 +152,7 @@ var grid = {
         }
     },
 
+    //If the cell has not been visited then a flag is add/removed.
     flag: function(cell) {
         if (cell.visited === false && cell.flag === false){
             cell.innerText = "F";
@@ -161,11 +162,29 @@ var grid = {
             cell.innerText = "";
             cell.flag = false;
         }
+    },
+
+    //Makes sure the first click is not a mine.
+    clearFirst: function(cell){
+        cell.isMine = false;
+        
+        //Clears surrounding cells
+        let x = this.findCellPosition(cell)[0];
+        let y = this.findCellPosition(cell)[1];
+        try{    this.gridArray[x+1][y].isMine = false;   }catch(ignore){};//right
+        try{    this.gridArray[x-1][y].isMine = false;   }catch(ignore){};//left
+        try{    this.gridArray[x][y+1].isMine = false;   }catch(ignore){};//below
+        try{    this.gridArray[x][y-1].isMine = false;   }catch(ignore){};//above
+        try{    this.gridArray[x+1][y+1].isMine = false; }catch(ignore){};//below right
+        try{    this.gridArray[x-1][y+1].isMine = false; }catch(ignore){};//below left
+        try{    this.gridArray[x+1][y-1].isMine = false; }catch(ignore){};//above right
+        try{    this.gridArray[x-1][y-1].isMine = false; }catch(ignore){};//above left
     }
 }
 
 var gameController = {
     failed: false,//check if the game is over.
+    firstClick: true,//first click is true at the start.
 
     //Cell click listener.
     cellListener: function(){
@@ -173,7 +192,12 @@ var gameController = {
             for (j = 0; j < grid._cols; j++){
                 grid.gridArray[i][j].addEventListener('mouseup', function(event){
                     //Handler calls the checkCell method (if the game is not over).
-                    if ((event.button === 0) && (gameController.failed === false)){
+                    if ((event.button === 0) && (gameController.failed === false) && (gameController.firstClick === true)){
+                        grid.clearFirst(event.target);
+                        gameController.firstClick = false;
+                        grid.checkCell(event.target);
+                    }
+                    else if ((event.button === 0) && (gameController.failed === false)){
                         grid.checkCell(event.target);//Calls checkCell method.
                     }
                     else if ((event.button === 2) && (gameController.failed === false)){
