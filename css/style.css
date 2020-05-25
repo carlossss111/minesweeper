@@ -19,6 +19,7 @@ main{
     max-width: 840px;
     min-width: 60%;
     margin:0 auto;
+    min-height:85vh;
 }
 
 main p{
@@ -27,7 +28,7 @@ main p{
 
 footer{
     background-color: #801336;
-    position:absolute;
+    position:relative;
     bottom:0;
     width:100%;
 }
@@ -49,6 +50,7 @@ a img{
 }
 
 /*Minesweeper Grid*/
+
 :root {
     --grid-cols: 1;/*Default variable values*/
     --grid-rows: 1;
@@ -58,9 +60,10 @@ a img{
     margin:25px auto 50px auto;
     display:grid;
     grid-gap:0;
-    grid-template-rows: repeat(var(--grid-rows), 1fr);
-    grid-template-columns: repeat(var(--grid-cols), 1fr);
-    width:calc(36px * var(--grid-cols));
+    grid-template-rows: repeat(var(--grid-cols), 1fr);
+    grid-template-columns: repeat(var(--grid-rows), 1fr);
+    width:calc(36px * var(--grid-rows));
+    height:calc(36px * var(--grid-cols));
 }
 
 .cell{
