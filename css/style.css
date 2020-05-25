@@ -49,6 +49,10 @@ a img{
     padding-right:0.2em;
 }
 
+#topMsg{
+    height:1em;
+}
+
 /*Minesweeper Grid*/
 
 :root {

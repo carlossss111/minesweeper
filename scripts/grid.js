@@ -4,6 +4,7 @@ var grid = {
     _mines: 40,//default
     _gridArray: [],//set in initialiseGrid
     _container: document.getElementById("gridContainer"),
+    _flagged: 0,
 
     //_gridArray getter.
     get gridArray(){
@@ -58,7 +59,6 @@ var grid = {
     initialiseAll: function(rows, cols, mines){
         this.initialiseGrid(rows,cols);
         this.initialiseMines(mines);
-        document.getElementById("winfailMsg").style.visibility = "hidden";
         console.log("Grid initialised!")
     },
 
@@ -158,10 +158,12 @@ var grid = {
         if (cell.visited === false && cell.flag === false){
             cell.innerText = "F";
             cell.flag = true;
+            this._flagged++;
         }
         else if (cell.visited === false){
             cell.innerText = "";
             cell.flag = false;
+            this._flagged--;
         }
     },
 
@@ -227,8 +229,12 @@ var gameController = {
                             grid.flag(event.target);
                         }
 
+                        if(gameController.finished === false){
+                            gameController.flagMsg();
+                        }
+
                         //MOUSEWHEEL DEBUG
-                        else if (event.button === 1){
+                        if (event.button === 1){
                             console.log(event.target.isMine);
                         }
                     }
@@ -250,8 +256,7 @@ var gameController = {
         if((grid._rows * grid._cols) - this.noUncovered === grid._mines){
             console.log("You win!")
             grid.revealMines();
-            document.getElementById("winfailMsg").innerText = "You win! Press R to play again."
-            document.getElementById("winfailMsg").style.visibility = "visible";
+            document.getElementById("topMsg").innerText = "You win! Press R to play again."
             this.finished = true;
         }
     },
@@ -260,9 +265,12 @@ var gameController = {
     checkFail: function(){
         this.finished = true;
         console.log("Mine hit, game over!");
-        document.getElementById("winfailMsg").innerText = "Mine hit! Press 'r' to try again."
-        document.getElementById("winfailMsg").style.visibility = "visible";
+        document.getElementById("topMsg").innerText = "Mine hit! Press 'r' to try again."
         grid.revealMines();
+    },
+
+    flagMsg: function(){
+        document.getElementById("topMsg").innerText = (`${grid._mines - grid._flagged} need flagging.`);
     },
 
     //Calls other listener methods.
@@ -272,5 +280,5 @@ var gameController = {
     }
 }
 
-grid.initialiseAll(12,12,10);
+grid.initialiseAll(12,16,30);
 gameController.addAllListeners();
