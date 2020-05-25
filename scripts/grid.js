@@ -37,20 +37,20 @@ var grid = {
 
     //Method places the required (or default) amount of mines around randomly.
     initialiseMines: function(mines = this._mines){
-        for (i = 0; i < this._rows; i++){
-            for (j = 0; j < this._cols; j++){
-                if (mines === 0){
-                    break;
-                }
-                else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
-                    this._gridArray[i][j].isMine = true;//creates isMine attribute.
-                    this._gridArray[i][j].innerText = "M";//debug
-                    mines--;
+        this._mines = mines;
+        while(mines !== 0){
+            for (i = 0; i < this._rows; i++){
+                for (j = 0; j < this._cols; j++){
+                    if (mines === 0){
+                        break;
+                    }
+                    else if ((Math.random() < 0.05) && (this._gridArray[i][j].isMine === false)){
+                        this._gridArray[i][j].isMine = true;//creates isMine attribute.
+                        //this._gridArray[i][j].innerText = "M";//debug
+                        mines--;
+                    }
                 }
             }
-        }
-        if(mines !== 0){
-            this.initialiseMines(mines);
         }
     },
 
@@ -58,7 +58,7 @@ var grid = {
     initialiseAll: function(rows, cols, mines){
         this.initialiseGrid(rows,cols);
         this.initialiseMines(mines);
-        document.getElementById("failMsg").style.visibility = "hidden";
+        document.getElementById("winfailMsg").style.visibility = "hidden";
         console.log("Grid initialised!")
     },
 
@@ -69,10 +69,8 @@ var grid = {
         cell.style.color = "#2d132c";
 
         if(cell.isMine){
-            console.log("Mine hit, game over!");
-            cell.innerText = "M";
-            document.getElementById("failMsg").style.visibility = "visible";
             gameController.failed = true;
+            gameController.checkFail();
             return;
         }
 
@@ -85,10 +83,11 @@ var grid = {
         //FF uncover if there are none.
         if (this.adjacentMines(x,y)){
             cell.innerText = this.adjacentMines(x,y);
+            if(cell.visited === false) { gameController.noUncovered++ };
             cell.visited = true;
         }
         else{
-            this.FFuncover(x,y)
+            this.FFuncover(x,y);
         }
     },
 
@@ -103,6 +102,7 @@ var grid = {
         try{    if(this.gridArray[x-1][y+1].isMine){ count++ }; }catch(ignore){};//below left
         try{    if(this.gridArray[x+1][y-1].isMine){ count++ }; }catch(ignore){};//above right
         try{    if(this.gridArray[x-1][y-1].isMine){ count++ }; }catch(ignore){};//above left
+
         return count;
     },
 
@@ -135,6 +135,7 @@ var grid = {
         else{
             cell.innerText = "";
         }
+        gameController.noUncovered++;
         cell.style.backgroundColor = "#c72c41";
         cell.style.color = "#2d132c";
         cell.visited = true;
@@ -179,12 +180,33 @@ var grid = {
         try{    this.gridArray[x-1][y+1].isMine = false; }catch(ignore){};//below left
         try{    this.gridArray[x+1][y-1].isMine = false; }catch(ignore){};//above right
         try{    this.gridArray[x-1][y-1].isMine = false; }catch(ignore){};//above left
+
+        //Updates total minecount incase any were deleted
+        this._mines = 0;
+        for (i = 0; i < this._rows; i++){
+            for (j = 0; j < this._cols; j++){
+                if (this.gridArray[i][j].isMine){
+                    this._mines++;
+                }
+            }
+        }
+    },
+
+    revealMines: function(){
+        for (i = 0; i < this._rows; i++){
+            for (j = 0; j < this._cols; j++){
+                if (this.gridArray[i][j].isMine){
+                    this.gridArray[i][j].innerText = "M"
+                }
+            }
+        }
     }
 }
 
 var gameController = {
     failed: false,//check if the game is over.
     firstClick: true,//first click is true at the start.
+    noUncovered: 0,
 
     //Cell click listener.
     cellListener: function(){
@@ -192,16 +214,23 @@ var gameController = {
             for (j = 0; j < grid._cols; j++){
                 grid.gridArray[i][j].addEventListener('mouseup', function(event){
                     //Handler calls the checkCell method (if the game is not over).
-                    if ((event.button === 0) && (gameController.failed === false) && (gameController.firstClick === true)){
-                        grid.clearFirst(event.target);
-                        gameController.firstClick = false;
-                        grid.checkCell(event.target);
-                    }
-                    else if ((event.button === 0) && (gameController.failed === false)){
-                        grid.checkCell(event.target);//Calls checkCell method.
-                    }
-                    else if ((event.button === 2) && (gameController.failed === false)){
-                        grid.flag(event.target);
+                    if(gameController.failed === false){
+                        if (event.button === 0){
+                            if(gameController.firstClick === true){
+                                grid.clearFirst(event.target);
+                                gameController.firstClick = false;
+                            }
+                            grid.checkCell(event.target);
+                            gameController.checkWin();
+                        }
+                        else if (event.button === 2){
+                            grid.flag(event.target);
+                        }
+
+                        //MOUSEWHEEL DEBUG
+                        else if (event.button === 1){
+                            console.log(event.target.isMine);
+                        }
                     }
                 })
             }
@@ -216,6 +245,25 @@ var gameController = {
         })
     },
 
+    //Called every uncover.
+    checkWin: function(){
+        if((grid._rows * grid._cols) - this.noUncovered === grid._mines){
+            console.log("You win!")
+            grid.revealMines();
+            document.getElementById("winfailMsg").innerText = "You win! Press R to play again."
+            document.getElementById("winfailMsg").style.visibility = "visible";
+        }
+    },
+
+    //Called if mine.
+    checkFail: function(){
+        this.failed = true;
+        console.log("Mine hit, game over!");
+        document.getElementById("winfailMsg").innerText = "Mine hit! Press 'r' to try again."
+        document.getElementById("winfailMsg").style.visibility = "visible";
+        grid.revealMines();
+    },
+
     //Calls other listener methods.
     addAllListeners(){
         this.cellListener();
@@ -223,5 +271,5 @@ var gameController = {
     }
 }
 
-grid.initialiseAll(12,12,40);
+grid.initialiseAll(12,12,50);
 gameController.addAllListeners();
