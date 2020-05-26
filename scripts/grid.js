@@ -1,3 +1,4 @@
+//grid Object deals with anything happening inside of the grid.
 var grid = {
     _rows: 12,//default
     _cols: 12,//default
@@ -205,6 +206,7 @@ var grid = {
     }
 }
 
+//gameController Object deals with game-related events and win/fail conditions.
 var gameController = {
     finished: false,//check if the game is over.
     firstClick: true,//first click is true at the start.
@@ -280,5 +282,34 @@ var gameController = {
     }
 }
 
-grid.initialiseAll(12,16,30);
+//options Object deals with the initial grid settings.
+var options = {
+    mineInput: document.getElementById("mineRange").value,//Number of mines slider.
+
+    mineInputInitial: function(){
+        document.getElementById("mineRangeDisplay").innerText = `Number of Mines: ${options.mineInput}`;
+    },
+
+    mineInputChange: function(){
+        document.getElementById("mineRange").addEventListener('mouseup',function(){
+            options.mineInput = document.getElementById("mineRange").value;
+            document.getElementById("mineRangeDisplay").innerText = `Number of Mines: ${options.mineInput}`;
+        })
+    },
+
+    anyOptionChange: function(){
+        document.querySelectorAll("input").forEach(function(input){
+            input.addEventListener('change',function(){
+                document.getElementById("refresh").innerText = "Press R to reload with the new settings."
+            })
+        })
+    }
+
+}
+
+grid.initialiseAll(12,16,options.mineInput);
 gameController.addAllListeners();
+
+options.mineInputInitial();
+options.mineInputChange();
+options.anyOptionChange();

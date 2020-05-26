@@ -14,6 +14,11 @@
         <h1>Daniel's Minesweeper</h1>
     </header>
     <main>
+        <form>
+            <input type="range" min="1" max="100" value="30" class="slider" id="mineRange">
+            <label id="mineRangeDisplay">Number of Mines</label>
+            <p id="refresh"></p>
+        </form>
         <p>Left click to uncover, right click to flag, press r to reset.</p>
         <h2 id="topMsg"> </h2>
         <div id="gridContainer" oncontextmenu="return false;">
