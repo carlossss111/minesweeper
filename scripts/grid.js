@@ -170,6 +170,7 @@ var grid = {
 
     //Makes sure the first click is not a mine.
     clearFirst: function(cell){
+
         cell.isMine = false;
         
         //Clears surrounding cells
@@ -220,7 +221,7 @@ var gameController = {
                     //Handler calls the checkCell method (if the game is not over).
                     if(gameController.finished === false){
                         if (event.button === 0 && event.target.flag === false){
-                            if(gameController.firstClick === true){
+                            if(gameController.firstClick && document.getElementById("clearFirst").checked){
                                 grid.clearFirst(event.target);
                                 gameController.firstClick = false;
                             }
@@ -297,23 +298,23 @@ var options = {
         display.innerText = `Number of ${name}s: ${sessionStorage.getItem(store)||20}`;
         if (name === "mine"){//Mine has additional initial changes.
             this.mineInput.max = this.maxMines();
-            display.innerText += " (max 90%)";
+            display.innerText += " (max 70%)";
         }
     },
 
     //Listens for change in number of mines. On refresh, loads with that amount of mines.
-    inputListener: function(sliderInput, store, display, name){
+    sliderListener: function(sliderInput, store, display, name){
         sliderInput.addEventListener('change',function(){
             sessionStorage.setItem(store,sliderInput.value);
             display.innerText = `Number of ${name}s: ${sliderInput.value}`;
             if (name === "mine") {
                 sliderInput.max = options.maxMines();
-                display.innerText += " (max 90%)";
+                display.innerText += " (max 70%)";
             };
             if(options.mineInput.value > options.maxMines()){
                 options.mineInput.value = options.maxMines();
                 sessionStorage.setItem("mineTotal",options.mineInput.value);
-                options.mineDisplay.innerText = `Number of miness: ${options.mineInput.value} (max 90%)`;
+                options.mineDisplay.innerText = `Number of miness: ${options.mineInput.value} (max 70%)`;
                 console.log(options.mineInput.value);
             }
         })
@@ -322,8 +323,7 @@ var options = {
     //Calculates maximum amount of mines allowed with a given size.
     maxMines: function(){
         let size =  parseInt(sessionStorage.getItem("rowTotal"))*parseInt(sessionStorage.getItem("colTotal"));
-        console.log(Math.floor(size * 0.9));
-        return Math.floor(size * 0.9);//90% mines.
+        return Math.floor(size * 0.7);//70% mines.
     },
 
     //Message tells the user to refresh the page once a change has been implemented.
@@ -337,13 +337,13 @@ var options = {
 
     addAllListeners: function(){
         this.inputInitial("mineTotal",options.mineDisplay,"mine");
-        this.inputListener(options.mineInput,"mineTotal",options.mineDisplay,"mine");
+        this.sliderListener(options.mineInput,"mineTotal",options.mineDisplay,"mine");
 
         this.inputInitial("rowTotal",options.rowDisplay,"row");
-        this.inputListener(options.rowInput,"rowTotal",options.rowDisplay,"row");
+        this.sliderListener(options.rowInput,"rowTotal",options.rowDisplay,"row");
 
         this.inputInitial("colTotal",options.colDisplay,"column");
-        this.inputListener(options.colInput,"colTotal",options.colDisplay,"column");
+        this.sliderListener(options.colInput,"colTotal",options.colDisplay,"column");
         this.anyChangeListener();
     },
 
