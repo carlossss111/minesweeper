@@ -292,10 +292,13 @@ var options = {
     colDisplay: document.getElementById("colRangeDisplay"),
     //+ session storages.
 
-   //MINE INPUT
     //At startup
     inputInitial: function(store, display,name){
         display.innerText = `Number of ${name}s: ${sessionStorage.getItem(store)||20}`;
+        if (name === "mine"){//Mine has additional initial changes.
+            this.mineInput.max = this.maxMines();
+            display.innerText += " (max 90%)";
+        }
     },
 
     //Listens for change in number of mines. On refresh, loads with that amount of mines.
@@ -303,7 +306,24 @@ var options = {
         sliderInput.addEventListener('change',function(){
             sessionStorage.setItem(store,sliderInput.value);
             display.innerText = `Number of ${name}s: ${sliderInput.value}`;
+            if (name === "mine") {
+                sliderInput.max = options.maxMines();
+                display.innerText += " (max 90%)";
+            };
+            if(options.mineInput.value > options.maxMines()){
+                options.mineInput.value = options.maxMines();
+                sessionStorage.setItem("mineTotal",options.mineInput.value);
+                options.mineDisplay.innerText = `Number of miness: ${options.mineInput.value} (max 90%)`;
+                console.log(options.mineInput.value);
+            }
         })
+    },
+
+    //Calculates maximum amount of mines allowed with a given size.
+    maxMines: function(){
+        let size =  parseInt(sessionStorage.getItem("rowTotal"))*parseInt(sessionStorage.getItem("colTotal"));
+        console.log(Math.floor(size * 0.9));
+        return Math.floor(size * 0.9);//90% mines.
     },
 
     //Message tells the user to refresh the page once a change has been implemented.
@@ -315,16 +335,26 @@ var options = {
         })
     },
 
+    addAllListeners: function(){
+        this.inputInitial("mineTotal",options.mineDisplay,"mine");
+        this.inputListener(options.mineInput,"mineTotal",options.mineDisplay,"mine");
+
+        this.inputInitial("rowTotal",options.rowDisplay,"row");
+        this.inputListener(options.rowInput,"rowTotal",options.rowDisplay,"row");
+
+        this.inputInitial("colTotal",options.colDisplay,"column");
+        this.inputListener(options.colInput,"colTotal",options.colDisplay,"column");
+        this.anyChangeListener();
+    },
+
 }
-grid.initialiseAll(sessionStorage.getItem("rowTotal")||12,sessionStorage.getItem("colTotal")||12,parseInt(sessionStorage.getItem("mineTotal"))||20);
+
+//Defaults on new load. 12,12,20.
+sessionStorage.setItem("rowTotal",sessionStorage.getItem("rowTotal")||12);
+sessionStorage.setItem("colTotal",sessionStorage.getItem("colTotal")||12);
+sessionStorage.setItem("mineTotal",sessionStorage.getItem("mineTotal")||30);
+
+
+grid.initialiseAll(sessionStorage.getItem("rowTotal"),sessionStorage.getItem("colTotal"),parseInt(sessionStorage.getItem("mineTotal")));
 gameController.addAllListeners();
-
-options.inputInitial("mineTotal",options.mineDisplay,"mine");
-options.inputListener(options.mineInput,"mineTotal",options.mineDisplay,"mine");
-
-options.inputInitial("rowTotal",options.rowDisplay,"row");
-options.inputListener(options.rowInput,"rowTotal",options.rowDisplay,"row");
-
-options.inputInitial("colTotal",options.colDisplay,"column");
-options.inputListener(options.colInput,"colTotal",options.colDisplay,"column");
-options.anyChangeListener();
+options.addAllListeners();
