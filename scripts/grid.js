@@ -284,32 +284,47 @@ var gameController = {
 
 //options Object deals with the initial grid settings.
 var options = {
-    mineInput: document.getElementById("mineRange").value,//Number of mines slider.
+    mineInput: document.getElementById("mineRange"),
+    mineDisplay: document.getElementById("mineRangeDisplay"),
+    rowInput: document.getElementById("rowRange"),
+    rowDisplay: document.getElementById("rowRangeDisplay"),
+    colInput: document.getElementById("colRange"),
+    colDisplay: document.getElementById("colRangeDisplay"),
+    //+ session storages.
 
-    mineInputInitial: function(){
-        document.getElementById("mineRangeDisplay").innerText = `Number of Mines: ${options.mineInput}`;
+   //MINE INPUT
+    //At startup
+    inputInitial: function(store, display,name){
+        display.innerText = `Number of ${name}s: ${sessionStorage.getItem(store)||20}`;
     },
 
-    mineInputChange: function(){
-        document.getElementById("mineRange").addEventListener('mouseup',function(){
-            options.mineInput = document.getElementById("mineRange").value;
-            document.getElementById("mineRangeDisplay").innerText = `Number of Mines: ${options.mineInput}`;
+    //Listens for change in number of mines. On refresh, loads with that amount of mines.
+    inputListener: function(sliderInput, store, display, name){
+        sliderInput.addEventListener('change',function(){
+            sessionStorage.setItem(store,sliderInput.value);
+            display.innerText = `Number of ${name}s: ${sliderInput.value}`;
         })
     },
 
-    anyOptionChange: function(){
-        document.querySelectorAll("input").forEach(function(input){
-            input.addEventListener('change',function(){
-                document.getElementById("refresh").innerText = "Press R to reload with the new settings."
+    //Message tells the user to refresh the page once a change has been implemented.
+    anyChangeListener: function(){
+        document.querySelectorAll(".slider").forEach(function(elem){
+            elem.addEventListener('change',function(){
+                document.getElementById("refresh").innerHTML = "<span style='text-decoration:underline;'>Press R</span> to reload the grid with the new changes."
             })
         })
-    }
+    },
 
 }
-
-grid.initialiseAll(12,16,options.mineInput);
+grid.initialiseAll(sessionStorage.getItem("rowTotal")||12,sessionStorage.getItem("colTotal")||12,parseInt(sessionStorage.getItem("mineTotal"))||20);
 gameController.addAllListeners();
 
-options.mineInputInitial();
-options.mineInputChange();
-options.anyOptionChange();
+options.inputInitial("mineTotal",options.mineDisplay,"mine");
+options.inputListener(options.mineInput,"mineTotal",options.mineDisplay,"mine");
+
+options.inputInitial("rowTotal",options.rowDisplay,"row");
+options.inputListener(options.rowInput,"rowTotal",options.rowDisplay,"row");
+
+options.inputInitial("colTotal",options.colDisplay,"column");
+options.inputListener(options.colInput,"colTotal",options.colDisplay,"column");
+options.anyChangeListener();

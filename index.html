@@ -11,12 +11,16 @@
 </head>
 <body>
     <header>
-        <h1>Daniel's Minesweeper</h1>
+        <h1>Daniel's HTML Minesweeper</h1>
     </header>
     <main>
         <form>
-            <input type="range" min="1" max="100" value="30" class="slider" id="mineRange">
+            <input type="range" min="10" max="100" class="slider" id="mineRange">
             <label id="mineRangeDisplay">Number of Mines</label>
+            <input type="range" min="5" max="100" class="slider" id="rowRange">
+            <label id="rowRangeDisplay">Number of Rows</label>
+            <input type="range" min="5" max="100" class="slider" id="colRange">
+            <label id="colRangeDisplay">Number of Columns</label>
             <p id="refresh"></p>
         </form>
         <p>Left click to uncover, right click to flag, press r to reset.</p>

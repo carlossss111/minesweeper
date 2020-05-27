@@ -53,6 +53,11 @@ a img{
     height:1em;
 }
 
+/*Inputs*//*TODO*/
+label{
+    display:block;
+}
+
 /*Minesweeper Grid*/
 
 :root {
