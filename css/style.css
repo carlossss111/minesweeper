@@ -54,8 +54,19 @@ a img{
 }
 
 /*Inputs*//*TODO*/
-label{
-    display:block;
+form{
+    text-align: left;
+}
+
+input{
+    margin-left:30%;
+    width:200px;
+}
+
+#clearFirst{
+    width:30px;
+    margin-left:calc(30% + 170px);
+    margin-top: 4px;
 }
 
 /*Minesweeper Grid*/

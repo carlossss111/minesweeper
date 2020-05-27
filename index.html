@@ -15,15 +15,23 @@
     </header>
     <main>
         <form>
-            <input type="range" min="10" max="100" class="slider" id="mineRange">
-            <label id="mineRangeDisplay">Number of Mines</label>
-            <input type="range" min="5" max="32" class="slider" id="rowRange">
-            <label id="rowRangeDisplay">Number of Rows</label>
+            <div>
+                <input type="range" min="10" max="100" class="slider" id="mineRange">
+                <label id="mineRangeDisplay">Number of Mines</label>
+            </div>
+            <div>
+                <input type="range" min="5" max="32" class="slider" id="rowRange">
+                <label id="rowRangeDisplay">Number of Rows</label>
+            </div>
+            <div>
             <input type="range" min="5" max="56" class="slider" id="colRange">
             <label id="colRangeDisplay">Number of Columns</label>
+            </div>
+            <div>
             <input type="checkbox" checked="checked" id="clearFirst">
             <label>Clear adjacent mines on first click?</label>
-            <p id="refresh"></p>
+            </div>
+            <p id="refresh" style="text-align:center;"></p>
         </form>
         <p>Left click to uncover, right click to flag, press r to reset.</p>
         <h2 id="topMsg"> </h2>
